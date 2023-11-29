@@ -8,6 +8,5 @@ public class Cell extends JButton {
 
     public void setPiece(Piece piece) {
         this.piece = piece;
-        piece.setCell(this);
     }
 }

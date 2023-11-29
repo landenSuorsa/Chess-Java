@@ -1,14 +1,11 @@
 import java.util.ArrayList;
 
-abstract class Piece {
-    Cell cell;
+public class Piece {
+    String type;
 
-    public Cell getCell() {return cell; }
-    public void setCell(Cell cell) {this.cell = cell; }
-    abstract ArrayList<Cell> getPossibleMoves();
-    public void move(Cell cell) {
-        getCell().setPiece(null);
-        setCell(cell);
-        cell.setPiece(this);
+    public Piece(String type) {
+        this.type = type;
     }
+
+    public String getType() {return type; }
 }

@@ -22,4 +22,12 @@ public class Board {
     public boolean stalemate() {
         return false;
     }
+
+    public ArrayList<Cell> getPossibleMoves(Cell cell) {
+        return null;
+    }
+
+    public void move(Cell start, Cell end) {
+
+    }
 }
