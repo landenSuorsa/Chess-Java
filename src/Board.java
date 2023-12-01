@@ -9,11 +9,17 @@ public class Board {
     Stack<Piece> blackPiecesTaken;
 
     public Board() {
-
+        //TODO: initialize pieces
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                cell2DArray[i][j] = new Cell();
+            }
+        }
     }
     public Cell getCellAt(int row, int col) {
         return cell2DArray[row][col];
     }
+    public Cell[][] getCell2DArray() {return cell2DArray; }
 
     public boolean checkmate() {
         return false;
