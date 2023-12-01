@@ -38,5 +38,16 @@ public class GUI {
          gameWindow.setLocationRelativeTo(null);
          gameWindow.setVisible(true);
 
+         int player = 1;
+
+         for (Cell[] row : game.getCell2DArray()) {
+             for (Cell cell : row) {
+                 if (cell.getPiece() != null && cell.getPiece().getPlayer() == player) {
+                     cell.setEnabled(true);
+                 } else {
+                     cell.setEnabled(false);
+                 }
+             }
+         }
      }
 }

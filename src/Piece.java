@@ -10,4 +10,5 @@ public class Piece {
     }
 
     public String getType() {return type; }
+    public int getPlayer() {return player; }
 }
