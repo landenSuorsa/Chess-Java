@@ -21,6 +21,7 @@ public class GUI {
 
      public static void newGame() {
          mainWindow.setVisible(false);
+         mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
          gameWindow = new JFrame("Chess");
          Board game = new Board();
@@ -38,8 +39,9 @@ public class GUI {
          gameWindow.setLocationRelativeTo(null);
          gameWindow.setVisible(true);
 
-         int player = 1;
+         game.getCellAt(5,5).setPiece(new Pawn(true, 1));
 
+         int player = 1;
          for (Cell[] row : game.getCell2DArray()) {
              for (Cell cell : row) {
                  if (cell.getPiece() != null && cell.getPiece().getPlayer() == player) {
@@ -49,5 +51,8 @@ public class GUI {
                  }
              }
          }
+
+         player = (player == 1) ? 2 : 1;
+         }
      }
-}
+
