@@ -74,10 +74,7 @@ public class Board {
             default:
         }
 
-        if ((cell.getPiece().getPlayer() == 1 && whiteKing.inCheck()) || (cell.getPiece().getPlayer() == 2 && blackKing.inCheck())) {
-            //TODO: Remove moves that don't protect the King
-            System.out.println("Placeholder");
-        }
+        //TODO: Remove moves that have their King in check after.
 
         cell.setEnabled(true);
         if (moves != null && moves.size() != 0) {
@@ -103,8 +100,11 @@ public class Board {
     }
 
     public ArrayList<Cell> queenMoves(Cell cell) {
-        //TODO: write this function to return an arraylist of all possible moves for a queen on Cell cell.
-        return null;
+        ArrayList<Cell> moves = rookMoves(cell);
+        for (Cell c : bishopMoves(cell)) {
+            moves.add(c);
+        }
+        return moves;
     }
 
     public ArrayList<Cell> kingMoves(Cell cell) {
