@@ -11,6 +11,16 @@ public class Cell extends JButton {
 
     public void setPiece(Piece piece) {
         this.piece = piece;
+        this.updateIcon();
     }
 
+    public void updateIcon() {
+        ImageIcon icon;
+        if (piece == null) {
+            icon = new ImageIcon("emptyCell");
+        } else {
+            icon = new ImageIcon("" + piece.getPlayer() + piece.getType() + ".png");
+        }
+        this.setIcon(icon);
+    }
 }

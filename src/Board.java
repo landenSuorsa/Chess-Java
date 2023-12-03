@@ -11,7 +11,7 @@ public class Board {
     Cell clickedCell = null;
 
     public Board() {
-        //TODO: initialize pieces
+        String[] pieceNames = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 int ifin = i;
@@ -20,6 +20,18 @@ public class Board {
                 cell2DArray[i][j].addActionListener(e -> clickCell(cell2DArray[ifin][jfin]));
             }
         }
+
+        for (int i = 0; i < 8; i++) {
+            cell2DArray[0][i].setPiece(new Piece(pieceNames[i],2));
+            cell2DArray[1][i].setPiece(new Pawn(false,2));
+            cell2DArray[7][i].setPiece(new Piece(pieceNames[i],1));
+            cell2DArray[6][i].setPiece(new Pawn(true,1));
+        }
+
+        cell2DArray[0][4].setPiece(new King(2));
+        cell2DArray[7][4].setPiece(new King(1));
+        blackKing = (King)cell2DArray[0][4].getPiece();
+        whiteKing = (King)cell2DArray[7][4].getPiece();
     }
 
     public Cell getCellAt(int row, int col) {
@@ -38,7 +50,13 @@ public class Board {
         return false;
     } //TODO: make this function return if the board is in a state of stalemate.
 
-    public ArrayList<Cell> getPossibleMoves(Cell cell) {
+    public void showPossibleMoves(Cell cell) {
+        for (Cell[] row : cell2DArray) {
+            for (Cell c : row) {
+                c.setEnabled(false);
+            }
+        }
+
         ArrayList<Cell> moves = new ArrayList<>();
         switch (cell.getPiece().getType()) {
             case "Pawn":
@@ -54,18 +72,19 @@ public class Board {
             case "Knight":
                 moves = knightMoves(cell);
             default:
-                throw new RuntimeException();
         }
 
-        //if ((cell.getPiece().getPlayer() == 1 && whiteKing.inCheck()) || (cell.getPiece().getPlayer() == 2 && blackKing.inCheck())) {
-        //TODO: Remove moves that don't protect the King
-        //}
+        if ((cell.getPiece().getPlayer() == 1 && whiteKing.inCheck()) || (cell.getPiece().getPlayer() == 2 && blackKing.inCheck())) {
+            //TODO: Remove moves that don't protect the King
+            System.out.println("Placeholder");
+        }
 
-        //return moves;
-    }
-
-    public void move(Cell start, Cell end) {
-        //TODO: take the piece on Cell start and move it to Cell end. If it lands on enemy, take the enemy's piece.
+        cell.setEnabled(true);
+        if (moves != null && moves.size() != 0) {
+            for (Cell move : moves) {
+                move.setEnabled(true);
+            }
+        }
     }
 
     public ArrayList<Cell> pawnMoves(Cell cell) {
@@ -102,15 +121,19 @@ public class Board {
         if (cell.getPiece() != null && clickedCell == null) {
             // case for if no cell has been pressed yet.
             clickedCell = cell;
+            showPossibleMoves(cell);
         } else if (clickedCell != null && cell.equals(clickedCell)) {
             // case for if the same cell is clicked twice, unselecting it.
             clickedCell = null;
+            enablePlayersPieces(cell.getPiece().getPlayer());
         } else if (clickedCell != null) {
             // cases for moving a piece
             if (cell.getPiece() == null) {
                 // case for if nothing is in the spot the piece is going.
                 cell.setPiece(clickedCell.getPiece());
                 clickedCell.setPiece(null);
+                if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
+                else enablePlayersPieces(1);
             } else if (cell.getPiece().getPlayer() != clickedCell.getPiece().getPlayer()) {
                 // cases for if a piece is in the spot it is going
                 if (cell.getPiece().getPlayer() == 1) {
@@ -124,10 +147,24 @@ public class Board {
                 // moves the piece.
                 cell.setPiece(clickedCell.getPiece());
                 clickedCell.setPiece(null);
+                if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
+                else enablePlayersPieces(1);
             }
         } else {
             // shouldn't be reached.
             throw new RuntimeException();
+        }
+    }
+
+    public void enablePlayersPieces(int player) {
+        for (Cell[] row : cell2DArray) {
+            for (Cell cell : row) {
+                if (cell.getPiece() != null && cell.getPiece().getPlayer() == player) {
+                    cell.setEnabled(true);
+                } else {
+                    cell.setEnabled(false);
+                }
+            }
         }
     }
 }

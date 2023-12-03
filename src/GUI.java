@@ -38,8 +38,7 @@ public class GUI {
          gameWindow.setSize(600,600);
          gameWindow.setLocationRelativeTo(null);
          gameWindow.setVisible(true);
-
-         game.getCellAt(5,5).setPiece(new Pawn(true, 1));
+         gameWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
          int player = 1;
          for (Cell[] row : game.getCell2DArray()) {
@@ -51,8 +50,6 @@ public class GUI {
                  }
              }
          }
-
-         player = (player == 1) ? 2 : 1;
-         }
      }
+ }
 
