@@ -1,0 +1,12 @@
+import java.io.*;
+import java.util.*;
+
+public Bishop{
+
+private String name; // bishop
+private int points;// 1 point
+
+
+
+
+}//end of class
