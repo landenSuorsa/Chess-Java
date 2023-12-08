@@ -1,10 +1,11 @@
 import java.io.*;
 import java.util.*;
 
-public Bishop{
+public Bishop extends Piece{
 
-private String name; // bishop
-private int points;// 1 point
+public Bishop(){
+  super("Bishop", 
+}
 
 
 
