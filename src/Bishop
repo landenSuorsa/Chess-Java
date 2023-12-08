@@ -8,8 +8,8 @@ public Bishop(){
 }
 
 public void move(int[] newPosition){
-  int column = Math.abs(newPosition[0] - nameofboard[0]);
-  int row = Math.abs(newPosition[1] - nameofboard[1]);
+  int column = Math.abs(newPosition[0] - cell2DArray[0]);
+  int row = Math.abs(newPosition[1] - cell2DArray[1]);
 }
 
 
