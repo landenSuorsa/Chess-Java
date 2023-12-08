@@ -7,11 +7,20 @@ public Bishop(){
   super("Bishop", player); 
 }
 
-public void move(int[] newPosition){
-  int column = Math.abs(newPosition[0] - cell2DArray[0]);
-  int row = Math.abs(newPosition[1] - cell2DArray[1]);
+private void move(int[] newPosition){
+  if(isValidMove(newPosition)){
+    
+  }
 }
 
+private boolean isValidMove(int[] newPosition){
+boolean withinBoundary;
+int column = Math.abs(newPosition[0] - cell2DArray[0]);
+int row = Math.abs(newPosition[1] - cell2DArray[1]);
+withinBoundry = newPosition[0] >= 1 && newPosition[0] <= 8 && newPosition[1] >= 1 && newPosition[1] <=8;
+
+return row == column && withinBoundry;
+}
 
 
 
