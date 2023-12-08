@@ -1,7 +1,5 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class GUI {
  // general UI for starting game and playing game
@@ -14,6 +12,7 @@ public class GUI {
          ((JButton)mainWindow.getContentPane().getComponent(0)).addActionListener(e -> newGame());
 
          mainWindow.pack();
+         mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
          mainWindow.setSize(400,200);
          mainWindow.setLocationRelativeTo(null);
          mainWindow.setVisible(true);
@@ -21,11 +20,14 @@ public class GUI {
 
      public static void newGame() {
          mainWindow.setVisible(false);
-         mainWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
          gameWindow = new JFrame("Chess");
+         gameWindow.setSize(400,600);
+         gameWindow.setResizable(false);
+         gameWindow.setLayout(new BorderLayout());
          Board game = new Board();
          JPanel boardGrid = new JPanel();
+         boardGrid.setPreferredSize(new Dimension(400,400));
          boardGrid.setLayout(new GridLayout(8,8));
          for (Cell[] row : game.getCell2DArray()) {
              for (Cell cell : row) {
@@ -33,9 +35,16 @@ public class GUI {
              }
          }
 
-         gameWindow.getContentPane().add(boardGrid);
-         gameWindow.pack();
-         gameWindow.setSize(600,600);
+         JPanel whiteTakenPieces = new JPanel();
+         whiteTakenPieces.setLayout(new GridLayout(2,8));
+         whiteTakenPieces.setPreferredSize(new Dimension(500, 100));
+         gameWindow.add(whiteTakenPieces, BorderLayout.NORTH);
+         gameWindow.add(boardGrid, BorderLayout.CENTER);
+         JPanel blackTakenPieces = new JPanel();
+         blackTakenPieces.setLayout(new GridLayout(2,8));
+         blackTakenPieces.setPreferredSize(new Dimension(500, 100));
+         gameWindow.add(blackTakenPieces, BorderLayout.SOUTH);
+         gameWindow.revalidate(); gameWindow.pack();
          gameWindow.setLocationRelativeTo(null);
          gameWindow.setVisible(true);
          gameWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

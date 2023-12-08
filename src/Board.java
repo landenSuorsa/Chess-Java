@@ -1,4 +1,5 @@
-import java.lang.reflect.Array;
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -6,9 +7,13 @@ public class Board {
     Cell[][] cell2DArray = new Cell[8][8];
     King whiteKing;
     King blackKing;
-    Stack<Piece> whitePiecesTaken;
-    Stack<Piece> blackPiecesTaken;
+    JPanel whiteTakenPieces;
+    JPanel blackTakenPieces;
     Cell clickedCell = null;
+    Color brown = new Color(104,80,40);
+    Color lightBrown = new Color(130,100,60);
+    Color gray = new Color(60,60,60);
+    Color lightGray = new Color(90,90,90);
 
     public Board() {
         String[] pieceNames = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
@@ -18,6 +23,11 @@ public class Board {
                 int jfin = j;
                 cell2DArray[i][j] = new Cell();
                 cell2DArray[i][j].addActionListener(e -> clickCell(cell2DArray[ifin][jfin]));
+                if ((i % 2 == 1 && j % 2 == 0) || (i % 2 == 0 && j % 2 == 1)) {
+                    cell2DArray[i][j].setBackground(brown);
+                } else {
+                    cell2DArray[i][j].setBackground(lightBrown);
+                }
             }
         }
 
@@ -32,6 +42,11 @@ public class Board {
         cell2DArray[7][4].setPiece(new King(1));
         blackKing = (King)cell2DArray[0][4].getPiece();
         whiteKing = (King)cell2DArray[7][4].getPiece();
+
+        whiteTakenPieces = new JPanel();
+        whiteTakenPieces.setLayout(new GridLayout(2,8));
+        blackTakenPieces = new JPanel();
+        whiteTakenPieces.setLayout(new GridLayout(2,8));
     }
 
     public Cell getCellAt(int row, int col) {
@@ -40,6 +55,14 @@ public class Board {
 
     public Cell[][] getCell2DArray() {
         return cell2DArray;
+    }
+
+    public JPanel getWhiteTakenPieces() {
+        return whiteTakenPieces;
+    }
+
+    public JPanel getBlackTakenPieces() {
+        return blackTakenPieces;
     }
 
     public boolean checkmate() {
@@ -101,8 +124,10 @@ public class Board {
 
     public ArrayList<Cell> queenMoves(Cell cell) {
         ArrayList<Cell> moves = rookMoves(cell);
-        for (Cell c : bishopMoves(cell)) {
-            moves.add(c);
+        if (bishopMoves(cell) != null) {
+            for (Cell c : bishopMoves(cell)) {
+                moves.add(c);
+            }
         }
         return moves;
     }
@@ -138,10 +163,14 @@ public class Board {
                 // cases for if a piece is in the spot it is going
                 if (cell.getPiece().getPlayer() == 1) {
                     // puts the piece taken in the respective spot
-                    whitePiecesTaken.push(cell.getPiece());
+                    ImageIcon icon = new ImageIcon("1" + cell.getPiece().getType() + ".png");
+                    icon = new ImageIcon(icon.getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH));
+                    whiteTakenPieces.add(new JLabel(icon));
                 } else {
                     // puts the piece taken in the respective spot
-                    blackPiecesTaken.push(cell.getPiece());
+                    ImageIcon icon = new ImageIcon("2" + cell.getPiece().getType() + ".png");
+                    icon = new ImageIcon(icon.getImage().getScaledInstance(50,50,Image.SCALE_SMOOTH));
+                    blackTakenPieces.add(new JLabel(icon));
                 }
 
                 // moves the piece.
