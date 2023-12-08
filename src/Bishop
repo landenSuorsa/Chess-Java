@@ -7,6 +7,10 @@ public Bishop(){
   super("Bishop", player); 
 }
 
+public void setCheck(boolean check) {
+  this.check = check; 
+}
+
 
 
 
