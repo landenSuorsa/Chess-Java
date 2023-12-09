@@ -116,7 +116,9 @@ public class Board {
         Take piece:
         1.)the diagonal space in front of the piece and make sure to call setIcon() to change the picture
         */
-        if(
+        LinkedList<Cell> legalMoves = new LinkedList<Cell>();
+        Cell[][]
+
         return null;
     }
 
