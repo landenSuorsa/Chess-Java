@@ -110,8 +110,11 @@ public class Board {
         1.)the diagonal space in front of the piece and make sure to call setIcon() to change the picture
 
         return an arraylist that from the current position of the piece decides where you can move from there
+
+        ***how to write checks that doesnt let you go past the board perimeter***
         */
-        if(cell.
+        Cells[][] currBoard = getCell2DArray;
+        if(currBoard.
 
         return null;
     }
