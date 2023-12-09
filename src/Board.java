@@ -114,7 +114,9 @@ public class Board {
         ***how to write checks that doesnt let you go past the board perimeter***
         */
         Cells[][] currBoard = getCell2DArray;
-        if(currBoard.
+        if(currBoard.getPosition().getPlayer().equals("white")){//if the pawn is at the start then it can move up 2 or 1 spaces
+
+        }
 
         return null;
     }
