@@ -18,8 +18,6 @@ public class Piece {
         this.value = value;
     }
 
-    public Piece(Board 
-
     public String getType() {return type; }
     public int getPlayer() {return player; }
 }
