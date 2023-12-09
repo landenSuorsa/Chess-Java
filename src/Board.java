@@ -114,7 +114,7 @@ public class Board {
         1.)move from start position--> 2 or 1 space(s) forward
         2.)every move from then is 1 space
         Take piece:
-        1.)the diagonal space in front of the piece
+        1.)the diagonal space in front of the piece and make sure to call setIcon() to change the picture
         */
         if(
         return null;
