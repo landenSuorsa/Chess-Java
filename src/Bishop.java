@@ -4,9 +4,12 @@ import java.util.*;
 public class Bishop extends Piece{
 
 private int[] position;
+private int startCol;
+private int startRow;
 
 public Bishop(){
-  super("Bishop", player); 
+  super("Bishop", player);
+  this.startCol = 
 }
 
 private void move(int[] newPosition){
