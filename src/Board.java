@@ -114,8 +114,11 @@ public class Board {
         ***how to write checks that doesnt let you go past the board perimeter***
         */
         ArrayList<Cell> legalMoves = new ArrayList<Cell>();
-        Cells[][] currBoard = getCell2DArray;
-        if(cell.
+        Cell[][] currBoard = getCell2DArray();
+        for(int i = 1; i < 8; ++){
+           if(cell == currBoard[2[i]){
+               
+        }
 
         return null;
     }
