@@ -7,9 +7,11 @@ private int[] position;
 private int startCol;
 private int startRow;
 
-public Bishop(){
+public Bishop(int player){//assuming that player 1 is white and player 2 is black
   super("Bishop", player);
-  this.startCol = 
+  if(player == 1){
+    cell2DArray[1][3];
+  }
 }
 
 private void move(int[] newPosition){
