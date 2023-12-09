@@ -109,6 +109,14 @@ public class Board {
 
     public ArrayList<Cell> pawnMoves(Cell cell) {
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
+        /* can't move back only forward
+        Pawn move: 
+        1.)move from start position--> 2 or 1 space(s) forward
+        2.)every move from then is 1 space
+        Take piece:
+        1.)the diagonal space in front of the piece
+        */
+        if(
         return null;
     }
 
