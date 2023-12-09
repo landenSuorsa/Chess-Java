@@ -115,11 +115,10 @@ public class Board {
         2.)every move from then is 1 space
         Take piece:
         1.)the diagonal space in front of the piece and make sure to call setIcon() to change the picture
-        */
-        ArrayList<Cell> legalMoves = new ArrayList<Cell>();
-        Cell[][] currBoard = getCell2DArray();
 
-        int x = cell.
+        return an arraylist that from the current position of the piece decides where you can move from there
+        */
+        if(cell.
 
         return null;
     }
