@@ -4,10 +4,9 @@ import java.awt.*;
 public class GUI {
  // general UI for starting game and playing game
     private static JFrame mainWindow;
-    private static JFrame gameWindow;
-     public static void main(String[] args) {
+
+    public static void main(String[] args) {
          mainWindow = new JFrame("Chess");
-         JButton newGameButton = new JButton("New Game");
          mainWindow.add(new JButton("New Game"));
          ((JButton)mainWindow.getContentPane().getComponent(0)).addActionListener(e -> newGame());
 
@@ -21,7 +20,7 @@ public class GUI {
      public static void newGame() {
          mainWindow.setVisible(false);
 
-         gameWindow = new JFrame("Chess");
+         JFrame gameWindow = new JFrame("Chess");
          gameWindow.setSize(400,600);
          gameWindow.setResizable(false);
          gameWindow.setLayout(new BorderLayout());
@@ -35,15 +34,9 @@ public class GUI {
              }
          }
 
-         JPanel whiteTakenPieces = new JPanel();
-         whiteTakenPieces.setLayout(new GridLayout(2,8));
-         whiteTakenPieces.setPreferredSize(new Dimension(500, 100));
-         gameWindow.add(whiteTakenPieces, BorderLayout.NORTH);
+         gameWindow.add(game.getWhiteTakenPieces(), BorderLayout.NORTH);
          gameWindow.add(boardGrid, BorderLayout.CENTER);
-         JPanel blackTakenPieces = new JPanel();
-         blackTakenPieces.setLayout(new GridLayout(2,8));
-         blackTakenPieces.setPreferredSize(new Dimension(500, 100));
-         gameWindow.add(blackTakenPieces, BorderLayout.SOUTH);
+         gameWindow.add(game.getBlackTakenPieces(), BorderLayout.SOUTH);
          gameWindow.revalidate(); gameWindow.pack();
          gameWindow.setLocationRelativeTo(null);
          gameWindow.setVisible(true);
@@ -52,11 +45,7 @@ public class GUI {
          int player = 1;
          for (Cell[] row : game.getCell2DArray()) {
              for (Cell cell : row) {
-                 if (cell.getPiece() != null && cell.getPiece().getPlayer() == player) {
-                     cell.setEnabled(true);
-                 } else {
-                     cell.setEnabled(false);
-                 }
+                 cell.setEnabled(cell.getPiece() != null && cell.getPiece().getPlayer() == player);
              }
          }
      }

@@ -1,7 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Stack;
+import java.util.Arrays;
 
 public class Board {
     Cell[][] cell2DArray = new Cell[8][8];
@@ -12,8 +12,6 @@ public class Board {
     Cell clickedCell = null;
     Color brown = new Color(104,80,40);
     Color lightBrown = new Color(130,100,60);
-    Color gray = new Color(60,60,60);
-    Color lightGray = new Color(90,90,90);
 
     public Board() {
         String[] pieceNames = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
@@ -45,14 +43,11 @@ public class Board {
 
         whiteTakenPieces = new JPanel();
         whiteTakenPieces.setLayout(new GridLayout(2,8));
+        whiteTakenPieces.setPreferredSize(new Dimension(500,100));
         blackTakenPieces = new JPanel();
-        whiteTakenPieces.setLayout(new GridLayout(2,8));
+        blackTakenPieces.setLayout(new GridLayout(2,8));
+        blackTakenPieces.setPreferredSize(new Dimension(500,100));
     }
-
-    public Cell getCellAt(int row, int col) {
-        return cell2DArray[row][col];
-    }
-
     public Cell[][] getCell2DArray() {
         return cell2DArray;
     }
@@ -61,9 +56,7 @@ public class Board {
         return whiteTakenPieces;
     }
 
-    public JPanel getBlackTakenPieces() {
-        return blackTakenPieces;
-    }
+    public JPanel getBlackTakenPieces() {return blackTakenPieces; }
 
     public boolean checkmate() {
         return false;
@@ -158,7 +151,7 @@ public class Board {
             // case for if no cell has been pressed yet.
             clickedCell = cell;
             showPossibleMoves(cell);
-        } else if (clickedCell != null && cell.equals(clickedCell)) {
+        } else if (cell.equals(clickedCell)) {
             // case for if the same cell is clicked twice, unselecting it.
             clickedCell = null;
             enablePlayersPieces(cell.getPiece().getPlayer());
@@ -187,6 +180,23 @@ public class Board {
                 // moves the piece.
                 cell.setPiece(clickedCell.getPiece());
                 clickedCell.setPiece(null);
+
+                if (clickedCell.getPiece() instanceof Pawn && clickedCell.getPiece().getType().equals("Pawn")) {
+                    for (int i = 0; i < 8; i++) {
+                        if (clickedCell.getPiece().getPlayer() == 1) {
+                            if (cell2DArray[0][i].equals(cell)) {
+                                pawnEvolution((Pawn)cell.getPiece());
+                                cell.updateIcon();
+                            }
+                        } else {
+                            if (cell2DArray[7][i].equals(cell)) {
+                                pawnEvolution((Pawn)cell.getPiece());
+                                cell.updateIcon();
+                            }
+                        }
+                    }
+                }
+
                 if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
                 else enablePlayersPieces(1);
             }
@@ -206,5 +216,28 @@ public class Board {
                 }
             }
         }
+    }
+
+    public void pawnEvolution(Pawn pawn) {
+        JFrame popUp = new JFrame("Pawn Evolution");
+        popUp.setLayout(new FlowLayout());
+        JButton option1 = new JButton("Pawn");
+        option1.addActionListener(e -> {pawn.evolve(option1.getText()); popUp.setVisible(false); });
+        JButton option2 = new JButton("Rook");
+        option1.addActionListener(e -> {pawn.evolve(option2.getText()); popUp.setVisible(false); });
+        JButton option3 = new JButton("Bishop");
+        option1.addActionListener(e -> {pawn.evolve(option3.getText()); popUp.setVisible(false); });
+        JButton option4 = new JButton("Knight");
+        option1.addActionListener(e -> {pawn.evolve(option4.getText()); popUp.setVisible(false); });
+        JButton option5 = new JButton("Queen");
+        option1.addActionListener(e -> {pawn.evolve(option5.getText()); popUp.setVisible(false); });
+        popUp.add(option1);
+        popUp.add(option2);
+        popUp.add(option3);
+        popUp.add(option4);
+        popUp.add(option5);
+
+        popUp.setVisible(true);
+        popUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }
 }
