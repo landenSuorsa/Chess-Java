@@ -116,8 +116,8 @@ public class Board {
         ArrayList<Cell> legalMoves = new ArrayList<Cell>();
         Cell[][] currBoard = getCell2DArray();
         for(int i = 1; i < 8; ++){
-           if(cell == currBoard[2[i]){
-               
+           if(cell == currBoard[2[i]){//does the cell have coordinates or not
+               legalMoves.add(
         }
 
         return null;
