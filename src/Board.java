@@ -100,7 +100,7 @@ public class Board {
         }
     }
 
-    public ArrayList<Cell> pawnMoves(Cell cell) {
+    public ArrayList<Cell> pawnMoves(Cell cell) {// does the cell have something that i can get the position or do i need to add something(Cell[][] board)
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
 
         //how to write checks that doesnt let you go past the board perimeter***
