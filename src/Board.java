@@ -19,7 +19,7 @@ public class Board {
             for (int j = 0; j < 8; j++) {
                 int ifin = i;
                 int jfin = j;
-                cell2DArray[i][j] = new Cell();
+                cell2DArray[i][j] = new Cell(i, j);
                 cell2DArray[i][j].addActionListener(e -> clickCell(cell2DArray[ifin][jfin]));
                 if ((i % 2 == 1 && j % 2 == 0) || (i % 2 == 0 && j % 2 == 1)) {
                     cell2DArray[i][j].setBackground(brown);
@@ -189,18 +189,9 @@ public class Board {
                 clickedCell.setPiece(null);
 
                 if (clickedCell.getPiece() instanceof Pawn && clickedCell.getPiece().getType().equals("Pawn")) {
-                    for (int i = 0; i < 8; i++) {
-                        if (clickedCell.getPiece().getPlayer() == 1) {
-                            if (cell2DArray[0][i].equals(cell)) {
-                                pawnEvolution((Pawn)cell.getPiece());
-                                cell.updateIcon();
-                            }
-                        } else {
-                            if (cell2DArray[7][i].equals(cell)) {
-                                pawnEvolution((Pawn)cell.getPiece());
-                                cell.updateIcon();
-                            }
-                        }
+                    if ((cell.getRow() == 0 && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getPlayer() == 2)) {
+                        pawnEvolution(((Pawn)cell.getPiece()));
+                        cell.updateIcon();
                     }
                 }
 
