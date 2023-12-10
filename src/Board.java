@@ -102,17 +102,9 @@ public class Board {
 
     public ArrayList<Cell> pawnMoves(Cell cell) {
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
-        /* can't move back only forward
-        Pawn move: 
-        1.)move from start position--> 2 or 1 space(s) forward
-        2.)every move from then is 1 space
-        Take piece:
-        1.)the diagonal space in front of the piece and make sure to call setIcon() to change the picture
 
-        return an arraylist that from the current position of the piece decides where you can move from there
-
-        ***how to write checks that doesnt let you go past the board perimeter***
-        */
+        //how to write checks that doesnt let you go past the board perimeter***
+        
         ArrayList<Cell> legalMoves = new ArrayList<Cell>();
         Cell[][] currBoard = getCell2DArray();
         for(int i = 1; i < 8; ++){
@@ -125,9 +117,39 @@ public class Board {
 
     public ArrayList<Cell> bishopMoves(Cell cell) {
         //TODO: write this function to return an arraylist of all possible moves for a bishop on Cell cell.
-        return null;
+        ArrayList<Cell> possibleMoves = new ArrayList<>();
+
+        int currentRow = cell.getRow();
+        int currentCol = cell.getCol();
+
+        // Define the possible directions for a bishop (diagonals)
+        int[][] directions = { {-1, -1}, {-1, 1}, {1, -1}, {1, 1} };
+
+        // Iterate through each direction
+        for (int[] direction : directions) {
+            int row = currentRow + direction[0];
+            int col = currentCol + direction[1];
+
+            // Continue in the current direction until we reach the edge of the board
+            while (isValidBishopMove(row, col) && board[row][col] == null) {
+                possibleMoves.add(new Cell(row, col));
+                row += direction[0];
+                col += direction[1];
+            }
+
+            // Check if the last cell in the direction has an opponent's piece
+            if (isValidBishopMove(row, col) && board[row][col] != null && board[row][col].isWhite() != board[currentRow][currentCol].isWhite()) {
+                possibleMoves.add(new Cell(row, col));
+            }
+        }
+
+        return possibleMoves;
     }
 
+    private boolean isValidBishopMove(int row, int col) {
+        // Assuming the chessboard is an 8x8 grid
+        return row >= 0 && row < 8 && col >= 0 && col < 8;
+    }
     public ArrayList<Cell> rookMoves(Cell cell) {
         //TODO: write this function to return an arraylist of all possible moves for a rook on Cell cell.
         return null;
