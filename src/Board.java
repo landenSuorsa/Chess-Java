@@ -131,14 +131,14 @@ public class Board {
             int col = currentCol + direction[1];
 
             // Continue in the current direction until we reach the edge of the board
-            while (isValidBishopMove(row, col) && board[row][col] == null) {
+            while (isValidMove(row, col) && board[row][col] == null) {
                 possibleMoves.add(new Cell(row, col));
                 row += direction[0];
                 col += direction[1];
             }
 
             // Check if the last cell in the direction has an opponent's piece
-            if (isValidBishopMove(row, col) && board[row][col] != null && board[row][col].isWhite() != board[currentRow][currentCol].isWhite()) {
+            if (isValidMove(row, col) && board[row][col] != null && board[row][col].isWhite() != board[currentRow][currentCol].isWhite()) {
                 possibleMoves.add(new Cell(row, col));
             }
         }
@@ -146,7 +146,7 @@ public class Board {
         return possibleMoves;
     }
 
-    private boolean isValidBishopMove(int row, int col) {
+    private boolean isValidMove(int row, int col) {
         // Assuming the chessboard is an 8x8 grid
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
