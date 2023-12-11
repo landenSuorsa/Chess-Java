@@ -12,6 +12,19 @@ public class Cell extends JButton {
         this.row = row;
         this.col = col;
     }
+
+    public Cell(Cell cell) {
+        this.row = cell.getRow();
+        this.col = cell.getCol();
+        if (cell.getPiece() instanceof Pawn) {
+            this.piece = new Pawn((Pawn)cell.getPiece());
+        } else if (cell.getPiece() instanceof King) {
+            this.piece = new King((King)cell.getPiece());
+        } else if (cell.getPiece() != null) {
+            this.piece = new Piece(cell.getPiece());
+        }
+    }
+
     public Piece getPiece() {
         return piece;
     }

@@ -48,6 +48,15 @@ public class Board {
         blackTakenPieces.setLayout(new GridLayout(2,8));
         blackTakenPieces.setPreferredSize(new Dimension(500,100));
     }
+
+    public Board(Board board) {
+        this.cell2DArray = new Cell[8][8];
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                this.cell2DArray[i][j] = new Cell(board.getCell2DArray()[i][j]);
+            }
+        }
+    }
     public Cell[][] getCell2DArray() {
         return cell2DArray;
     }

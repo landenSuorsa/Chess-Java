@@ -7,6 +7,12 @@ public class Pawn extends Piece {
         super("Pawn", player);
         this.facingUp = facingUp;
     }
+
+    public Pawn(Pawn pawn) {
+        super("Pawn", pawn.getPlayer());
+        this.facingUp = pawn.facingUp;
+    }
+
     public void evolve(String type) {
         this.type = type;
     }

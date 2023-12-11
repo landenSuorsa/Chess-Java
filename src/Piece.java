@@ -8,7 +8,11 @@ public class Piece {
     public Piece(String type, int player) {
         this.type = type;
         this.player = player;
-       
+    }
+
+    public Piece(Piece piece) {
+        this.type = piece.getType();
+        this.player = piece.getPlayer();
     }
 
     public String getType() {return type; }
