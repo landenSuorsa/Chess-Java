@@ -348,9 +348,21 @@ public class Board {
                     }
                 }
             }
-            if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
-            else enablePlayersPieces(1);
+
+            int nextPlayer = (cell.getPiece().getPlayer() == 1) ? 2 : 1;
+            enablePlayersPieces(nextPlayer);
             clickedCell = null;
+
+            if (checkmate(nextPlayer)) {
+                System.out.println("Checkmate");
+            }
+            else if (check(nextPlayer)) {
+                System.out.println("Check");
+            }
+            else if (stalemate(nextPlayer)) {
+                System.out.println("Stalemate");
+            }
+
         } else {
             // shouldn't be reached.
             throw new RuntimeException();
