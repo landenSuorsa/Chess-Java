@@ -63,7 +63,32 @@ public class Board {
     } //TODO: make this function return if the board is in state of checkmate.
 
     public boolean stalemate() {
-        return false;
+        ArrayList<Cell> moves = new ArrayList<>();
+        for (Cell[] row : cell2DArray) {
+            for (Cell c : row) {
+                if (c.getPiece() != null) {
+                    switch (c.getPiece().getType()) {
+                        case "Pawn":
+                            moves = pawnMoves(c);
+                        case "Bishop":
+                            moves = bishopMoves(c);
+                        case "Rook":
+                            moves = rookMoves(c);
+                        case "Queen":
+                            moves = queenMoves(c);
+                        case "King":
+                            moves = kingMoves(c);
+                        case "Knight":
+                            moves = knightMoves(c);
+                    }
+                    if (moves.size() != 1) {
+                        return false;
+                    }
+                }
+                moves.clear();
+            }
+        }
+        return true;
     } //TODO: make this function return if the board is in a state of stalemate.
 
     public void showPossibleMoves(Cell cell) {
