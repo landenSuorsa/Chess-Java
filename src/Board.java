@@ -7,7 +7,7 @@ public class Board {
     Cell[][] cell2DArray = new Cell[8][8];
     King whiteKing;
     King blackKing;
-    JPanel whiteTakenPieces;
+    JPanel whiteTakenPieces;s
     JPanel blackTakenPieces;
     Cell clickedCell = null;
     Color brown = new Color(104,80,40);
