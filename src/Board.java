@@ -151,8 +151,37 @@ public class Board {
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
     public ArrayList<Cell> rookMoves(Cell cell) {
-        //TODO: write this function to return an arraylist of all possible moves for a rook on Cell cell.
-        return null;
+        ArrayList<Cell> moves = new ArrayList<>();
+
+        int[] directions = {-1, 0, 1};
+
+        for (int i : directions) {
+            for (int j : directions) {
+                if (i == 0 || j == 0) {
+                    for (int step = 1; step < 8; step++) {
+                        int newRow = cell.getRow() + step * i;
+                        int newCol = cell.getCol() + step * j;
+
+                        if (isValidMove(newRow, newCol)) {
+                            Cell newCell = getCellAt(newRow, newCol);
+
+                            if (newCell.getPiece() == null) {
+                                moves.add(newCell);
+                            } else if (newCell.getPiece().getPlayer() != cell.getPiece().getPlayer()) {
+                                moves.add(newCell);
+                                break;
+                            } else {
+                                break;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        return moves;
     }
 
     public ArrayList<Cell> queenMoves(Cell cell) {
@@ -166,13 +195,53 @@ public class Board {
     }
 
     public ArrayList<Cell> kingMoves(Cell cell) {
-        //TODO: write this function to return an arraylist of all possible moves for a king on Cell cell.
-        return null;
+        ArrayList<Cell> moves = new ArrayList<>();
+
+        int[] directions = {-1, 0, 1};
+        int currentRow = cell.getRow();
+        int currentCol = cell.getCol();
+
+        for (int i : directions) {
+            for (int j : directions) {
+                int newRow = currentRow + i;
+                int newCol = currentCol + j;
+
+                if (isValidMove(newRow, newCol) && (i != 0 || j != 0)) {
+                    Cell newCell = getCellAt(newRow, newCol);
+
+                    if (newCell.getPiece() == null || newCell.getPiece().getPlayer() != cell.getPiece().getPlayer()) {
+                        moves.add(newCell);
+                    }
+                }
+            }
+        }
+
+        return moves;
     }
 
     public ArrayList<Cell> knightMoves(Cell cell) {
-        //TODO: write this function to return an arraylist of all possible moves for a knight on Cell cell.
-        return null;
+        ArrayList<Cell> moves = new ArrayList<>();
+
+        int[] rowMoves = {1, 2, 2, 1, -1, -2, -2, -1};
+        int[] colMoves = {2, 1, -1, -2, -2, -1, 1, 2};
+
+        int currentRow = cell.getRow();
+        int currentCol = cell.getCol();
+
+        for (int i = 0; i < 8; i++) {
+            int newRow = currentRow + rowMoves[i];
+            int newCol = currentCol + colMoves[i];
+
+            if (isValidMove(newRow, newCol)) {
+                Cell newCell = getCellAt(newRow, newCol);
+
+                if (newCell.getPiece() == null || newCell.getPiece().getPlayer() != cell.getPiece().getPlayer()) {
+                    moves.add(newCell);
+                }
+            }
+        }
+
+        return moves;
     }
 
     public void clickCell(Cell cell) {
