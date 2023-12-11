@@ -16,6 +16,7 @@ public class Cell extends JButton {
         return piece;
     }
     public int getRow() {return row; }
+    public int getCol() {return col; }
 
     public void setPiece(Piece piece) {
         this.piece = piece;
