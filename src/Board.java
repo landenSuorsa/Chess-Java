@@ -80,6 +80,8 @@ public class Board {
                             moves = kingMoves(c);
                         case "Knight":
                             moves = knightMoves(c);
+                        default:
+                            System.out.println("oops");
                     }
                     if (moves.size() != 1) {
                         return false;
@@ -102,17 +104,21 @@ public class Board {
         switch (cell.getPiece().getType()) {
             case "Pawn":
                 moves = pawnMoves(cell);
+                break;
             case "Bishop":
                 moves = bishopMoves(cell);
+                break;
             case "Rook":
                 moves = rookMoves(cell);
+                break;
             case "Queen":
                 moves = queenMoves(cell);
+                break;
             case "King":
                 moves = kingMoves(cell);
+                break;
             case "Knight":
                 moves = knightMoves(cell);
-            default:
         }
 
         //TODO: Remove moves that have their King in check after.
