@@ -129,7 +129,7 @@ public class Board {
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
 
         //how to write checks that doesnt let you go past the board perimeter***
-        
+
         ArrayList<Cell> legalMoves = new ArrayList<Cell>();
         Cell[][] currBoard = getCell2DArray();
         for(int i = 1; i < 8; ++){
@@ -156,15 +156,15 @@ public class Board {
             int col = currentCol + direction[1];
 
             // Continue in the current direction until we reach the edge of the board
-            while (isValidMove(row, col) && board[row][col] == null) {
-                possibleMoves.add(new Cell(row, col));
+            while (isValidMove(row, col) && cell2DArray[row][col].getPiece() == null) {
+                possibleMoves.add(cell2DArray[row][col]);
                 row += direction[0];
                 col += direction[1];
             }
 
             // Check if the last cell in the direction has an opponent's piece
-            if (isValidMove(row, col) && board[row][col] != null && board[row][col].isWhite() != board[currentRow][currentCol].isWhite()) {
-                possibleMoves.add(new Cell(row, col));
+            if (isValidMove(row, col) && cell2DArray[row][col].getPiece() != null && (cell2DArray[row][col].getPiece().getPlayer() != cell2DArray[currentRow][currentCol].getPiece().getPlayer())) {
+                possibleMoves.add(cell2DArray[row][col]);
             }
         }
 
@@ -188,7 +188,7 @@ public class Board {
                         int newCol = cell.getCol() + step * j;
 
                         if (isValidMove(newRow, newCol)) {
-                            Cell newCell = getCellAt(newRow, newCol);
+                            Cell newCell = cell2DArray[newRow][newCol];
 
                             if (newCell.getPiece() == null) {
                                 moves.add(newCell);
@@ -232,7 +232,7 @@ public class Board {
                 int newCol = currentCol + j;
 
                 if (isValidMove(newRow, newCol) && (i != 0 || j != 0)) {
-                    Cell newCell = getCellAt(newRow, newCol);
+                    Cell newCell = cell2DArray[newRow][newCol];
 
                     if (newCell.getPiece() == null || newCell.getPiece().getPlayer() != cell.getPiece().getPlayer()) {
                         moves.add(newCell);
@@ -258,7 +258,7 @@ public class Board {
             int newCol = currentCol + colMoves[i];
 
             if (isValidMove(newRow, newCol)) {
-                Cell newCell = getCellAt(newRow, newCol);
+                Cell newCell = cell2DArray[newRow][newCol];
 
                 if (newCell.getPiece() == null || newCell.getPiece().getPlayer() != cell.getPiece().getPlayer()) {
                     moves.add(newCell);
