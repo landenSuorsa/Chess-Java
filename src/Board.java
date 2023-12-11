@@ -129,14 +129,14 @@ public class Board {
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
 
         //how to write checks that doesnt let you go past the board perimeter***
-
+/*
         ArrayList<Cell> legalMoves = new ArrayList<Cell>();
         Cell[][] currBoard = getCell2DArray();
         for(int i = 1; i < 8; ++){
            if(cell == currBoard[2[i]){//does the cell have coordinates or not
                legalMoves.add(
         }
-
+*/
         return null;
     }
 
@@ -284,8 +284,6 @@ public class Board {
                 // case for if nothing is in the spot the piece is going.
                 cell.setPiece(clickedCell.getPiece());
                 clickedCell.setPiece(null);
-                if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
-                else enablePlayersPieces(1);
             } else if (cell.getPiece().getPlayer() != clickedCell.getPiece().getPlayer()) {
                 // cases for if a piece is in the spot it is going
                 if (cell.getPiece().getPlayer() == 1) {
@@ -310,10 +308,10 @@ public class Board {
                         cell.updateIcon();
                     }
                 }
-
-                if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
-                else enablePlayersPieces(1);
             }
+            if (cell.getPiece().getPlayer() == 1) enablePlayersPieces(2);
+            else enablePlayersPieces(1);
+            clickedCell = null;
         } else {
             // shouldn't be reached.
             throw new RuntimeException();
