@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Board {
     Cell[][] cell2DArray = new Cell[8][8];
@@ -12,6 +14,7 @@ public class Board {
     Cell clickedCell = null;
     Color brown = new Color(104,80,40);
     Color lightBrown = new Color(130,100,60);
+    boolean isSimulation = false;
 
     public Board() {
         String[] pieceNames = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
@@ -54,8 +57,13 @@ public class Board {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.cell2DArray[i][j] = new Cell(board.getCell2DArray()[i][j]);
+                if (board.getCell2DArray()[i][j].getPiece() instanceof King) {
+                    if (this.getCell2DArray()[i][j].getPiece().getPlayer() == 1) whiteKing = (King)this.getCell2DArray()[i][j].getPiece();
+                    else blackKing = (King)this.getCell2DArray()[i][j].getPiece();
+                }
             }
         }
+        isSimulation = true;
     }
     public Cell[][] getCell2DArray() {
         return cell2DArray;
@@ -67,48 +75,42 @@ public class Board {
 
     public JPanel getBlackTakenPieces() {return blackTakenPieces; }
 
-    public boolean checkmate() {
+    public boolean checkmate(int player) {
+        if (!check(player)) return false;
+        else return returnTotalPossibleMoves(player).size() == 0;
+    }
+
+    public boolean check(int player) {
+        int enemy = (player == 1) ? 2 : 1;
+        for (Cell move : returnTotalPossibleMoves(enemy)) {
+            if (move.getPiece() == whiteKing || move.getPiece() == blackKing) {
+                return true;
+            }
+        }
         return false;
-    } //TODO: make this function return if the board is in state of checkmate.
+    }
 
-    public boolean stalemate() {
-        ArrayList<Cell> moves = new ArrayList<>();
+    public boolean stalemate(int player) {
+        if (check(player)) return false;
+        else return returnTotalPossibleMoves(player).size() == 0;
+    }
+
+    public Set<Cell> returnTotalPossibleMoves(int player) {
+        Set<Cell> moves = new HashSet<Cell>();
+
         for (Cell[] row : cell2DArray) {
             for (Cell c : row) {
-                if (c.getPiece() != null) {
-                    switch (c.getPiece().getType()) {
-                        case "Pawn":
-                            moves = pawnMoves(c);
-                        case "Bishop":
-                            moves = bishopMoves(c);
-                        case "Rook":
-                            moves = rookMoves(c);
-                        case "Queen":
-                            moves = queenMoves(c);
-                        case "King":
-                            moves = kingMoves(c);
-                        case "Knight":
-                            moves = knightMoves(c);
-                        default:
-                            System.out.println("oops");
-                    }
-                    if (moves.size() != 1) {
-                        return false;
-                    }
+                if (c.getPiece() != null && c.getPiece().getPlayer() == player) {
+                    ArrayList<Cell> m = returnPossibleMoves(c);
+                    moves.addAll(m);
                 }
-                moves.clear();
-            }
-        }
-        return true;
-    } //TODO: make this function return if the board is in a state of stalemate.
-
-    public void showPossibleMoves(Cell cell) {
-        for (Cell[] row : cell2DArray) {
-            for (Cell c : row) {
-                c.setEnabled(false);
             }
         }
 
+        return moves;
+    }
+
+    public ArrayList<Cell> returnPossibleMoves(Cell cell) {
         ArrayList<Cell> moves = new ArrayList<>();
         switch (cell.getPiece().getType()) {
             case "Pawn":
@@ -130,10 +132,32 @@ public class Board {
                 moves = knightMoves(cell);
         }
 
-        //TODO: Remove moves that have their King in check after.
+        if (!isSimulation) {
+            ArrayList<Cell> badMove = new ArrayList<>();
+            for (Cell move : moves) {
+                Board simulation = new Board(this);
+                simulation.getCell2DArray()[move.getRow()][move.getCol()].setPiece(simulation.getCell2DArray()[cell.getRow()][cell.getCol()].getPiece());
+                simulation.getCell2DArray()[cell.getRow()][cell.getCol()].setPiece(null);
+                if (simulation.check(cell.getPiece().getPlayer())) {
+                    badMove.add(move);
+                }
+            }
+            moves.removeAll(badMove);
+        }
+        return moves;
+    }
+
+    public void showPossibleMoves(Cell cell) {
+        for (Cell[] row : cell2DArray) {
+            for (Cell c : row) {
+                c.setEnabled(false);
+            }
+        }
+
+        ArrayList<Cell> moves = returnPossibleMoves(cell);
 
         cell.setEnabled(true);
-        if (moves != null && moves.size() != 0) {
+        if (moves.size() != 0) {
             for (Cell move : moves) {
                 move.setEnabled(true);
             }
@@ -152,7 +176,7 @@ public class Board {
                legalMoves.add(
         }
 */
-        return null;
+        return new ArrayList<Cell>();
     }
 
     public ArrayList<Cell> bishopMoves(Cell cell) {
