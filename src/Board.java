@@ -5,25 +5,33 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Creates a new chess board and contains all the movement patterns for the pieces.
+ * @author Landen Suorsa, Jonathan Hall, Christopher Hall
+ */
 public class Board {
-    Cell[][] cell2DArray = new Cell[8][8];
-    King whiteKing;
-    King blackKing;
-    JPanel whiteTakenPieces;
-    JPanel blackTakenPieces;
-    Cell clickedCell = null;
-    Color brown = new Color(104,80,40);
-    Color lightBrown = new Color(130,100,60);
-    boolean isSimulation = false;
+    private Cell[][] cell2DArray = new Cell[8][8]; // the board
+    private Piece whiteKing;
+    private Piece blackKing;
+    private JPanel whiteTakenPieces; // holds display of taken white pieces.
+    private JPanel blackTakenPieces; // holds display of taken black pieces.
+    private Cell clickedCell = null; // used within clickCell()
+    private Color brown = new Color(104,80,40);
+    private Color lightBrown = new Color(130,100,60);
+    private boolean isSimulation = false; // is set to true in deep copies of the board.
 
+    /**
+     * Creates a new chess Board with the default layout of the pieces.
+     */
     public Board() {
         String[] pieceNames = {"Rook", "Knight", "Bishop", "Queen", "King", "Bishop", "Knight", "Rook"};
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 int ifin = i;
                 int jfin = j;
-                cell2DArray[i][j] = new Cell(i, j);
-                cell2DArray[i][j].addActionListener(e -> clickCell(cell2DArray[ifin][jfin]));
+                cell2DArray[i][j] = new Cell(i, j); // creates a cell for spot {i, j}
+                cell2DArray[i][j].addActionListener(e -> clickCell(cell2DArray[ifin][jfin])); //Adds an action listener to cell.
+                // creates the iconic checkered pattern for the board.
                 if ((i % 2 == 1 && j % 2 == 0) || (i % 2 == 0 && j % 2 == 1)) {
                     cell2DArray[i][j].setBackground(brown);
                 } else {
@@ -32,18 +40,19 @@ public class Board {
             }
         }
 
+        // sets the pieces
         for (int i = 0; i < 8; i++) {
             cell2DArray[0][i].setPiece(new Piece(pieceNames[i],2));
-            cell2DArray[1][i].setPiece(new Pawn(false,2));
+            cell2DArray[1][i].setPiece(new Pawn(2));
             cell2DArray[7][i].setPiece(new Piece(pieceNames[i],1));
-            cell2DArray[6][i].setPiece(new Pawn(true,1));
+            cell2DArray[6][i].setPiece(new Pawn(1));
         }
 
-        cell2DArray[0][4].setPiece(new King(2));
-        cell2DArray[7][4].setPiece(new King(1));
-        blackKing = (King)cell2DArray[0][4].getPiece();
-        whiteKing = (King)cell2DArray[7][4].getPiece();
+        // sets the king variables to reference the king pieces.
+        blackKing = cell2DArray[0][4].getPiece();
+        whiteKing = cell2DArray[7][4].getPiece();
 
+        // creates the display for taken enemy pieces.
         whiteTakenPieces = new JPanel();
         whiteTakenPieces.setLayout(new GridLayout(2,8));
         whiteTakenPieces.setPreferredSize(new Dimension(500,100));
@@ -52,34 +61,56 @@ public class Board {
         blackTakenPieces.setPreferredSize(new Dimension(500,100));
     }
 
+    /**
+     * Creates a deep copy of the board for simulation purposes.
+     * @param board
+     */
     public Board(Board board) {
         this.cell2DArray = new Cell[8][8];
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 this.cell2DArray[i][j] = new Cell(board.getCell2DArray()[i][j]);
-                if (board.getCell2DArray()[i][j].getPiece() instanceof King) {
-                    if (this.getCell2DArray()[i][j].getPiece().getPlayer() == 1) whiteKing = (King)this.getCell2DArray()[i][j].getPiece();
-                    else blackKing = (King)this.getCell2DArray()[i][j].getPiece();
+                if (board.getCell2DArray()[i][j].getPiece() != null && board.getCell2DArray()[i][j].getPiece().getType().equals("King")) {
+                    if (this.getCell2DArray()[i][j].getPiece().getPlayer() == 1) whiteKing = this.getCell2DArray()[i][j].getPiece();
+                    else blackKing = this.getCell2DArray()[i][j].getPiece();
                 }
             }
         }
-        isSimulation = true;
+        isSimulation = true; // prevents infinite simulations.
     }
+
+    /**
+     * @return an 8x8 Cell array.
+     */
     public Cell[][] getCell2DArray() {
         return cell2DArray;
     }
 
+    /**
+     * @return gives the display of taken white pieces.
+     */
     public JPanel getWhiteTakenPieces() {
         return whiteTakenPieces;
     }
 
+    /**
+     * @return gives the display of taken black pieces.
+     */
     public JPanel getBlackTakenPieces() {return blackTakenPieces; }
 
+    /**
+     * @param player
+     * @return true if player is in checkmate, false otherwise
+     */
     public boolean checkmate(int player) {
         if (!check(player)) return false;
         else return returnTotalPossibleMoves(player).size() == 0;
     }
 
+    /**
+     * @param player
+     * @return true if player is in check, false otherwise
+     */
     public boolean check(int player) {
         int enemy = (player == 1) ? 2 : 1;
         for (Cell move : returnTotalPossibleMoves(enemy)) {
@@ -90,11 +121,19 @@ public class Board {
         return false;
     }
 
+    /**
+     * @param player
+     * @return true if player is in stalemate (has no possible moves). False otherwise
+     */
     public boolean stalemate(int player) {
         if (check(player)) return false;
         else return returnTotalPossibleMoves(player).size() == 0;
     }
 
+    /**
+     * @param player
+     * @return Every cell that player can make a move to.
+     */
     public Set<Cell> returnTotalPossibleMoves(int player) {
         Set<Cell> moves = new HashSet<Cell>();
 
@@ -110,6 +149,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * @param cell
+     * @return the Cells the piece on Cell cell can move to
+     */
     public ArrayList<Cell> returnPossibleMoves(Cell cell) {
         ArrayList<Cell> moves = new ArrayList<>();
         switch (cell.getPiece().getType()) {
@@ -132,6 +175,7 @@ public class Board {
                 moves = knightMoves(cell);
         }
 
+        // removes moves that endanger the King or leave the King endangered.
         if (!isSimulation) {
             ArrayList<Cell> badMove = new ArrayList<>();
             for (Cell move : moves) {
@@ -147,6 +191,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * Enables all cells that a piece can move onto. Also enables Cell cell.
+     * @param cell
+     */
     public void showPossibleMoves(Cell cell) {
         for (Cell[] row : cell2DArray) {
             for (Cell c : row) {
@@ -164,6 +212,10 @@ public class Board {
         }
     }
 
+    /**
+     * @param cell
+     * @return A list of cells that a pawn on Cell cell can move to.
+     */
     public ArrayList<Cell> pawnMoves(Cell cell) {// does the cell have something that i can get the position or do i need to add something(Cell[][] board)
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
 
@@ -179,6 +231,10 @@ public class Board {
         return new ArrayList<Cell>();
     }
 
+    /**
+     * @param cell
+     * @return A list of cells that a bishop on Cell cell can move to.
+     */
     public ArrayList<Cell> bishopMoves(Cell cell) {
         //TODO: write this function to return an arraylist of all possible moves for a bishop on Cell cell.
         ArrayList<Cell> possibleMoves = new ArrayList<>();
@@ -210,10 +266,20 @@ public class Board {
         return possibleMoves;
     }
 
+    /**
+     * @param row
+     * @param col
+     * @return checks to see if both row and col are in range 0-7.
+     */
     private boolean isValidMove(int row, int col) {
         // Assuming the chessboard is an 8x8 grid
         return row >= 0 && row < 8 && col >= 0 && col < 8;
     }
+
+    /**
+     * @param cell
+     * @return A list of cells that a rook on Cell cell can move to.
+     */
     public ArrayList<Cell> rookMoves(Cell cell) {
         ArrayList<Cell> moves = new ArrayList<>();
 
@@ -248,6 +314,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * @param cell
+     * @return A list of cells that a queen on Cell cell can move to.
+     */
     public ArrayList<Cell> queenMoves(Cell cell) {
         ArrayList<Cell> moves = rookMoves(cell);
         if (bishopMoves(cell) != null) {
@@ -258,6 +328,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * @param cell
+     * @return A list of cells that a King on Cell cell can move to.
+     */
     public ArrayList<Cell> kingMoves(Cell cell) {
         ArrayList<Cell> moves = new ArrayList<>();
 
@@ -283,6 +357,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * @param cell
+     * @return A list of cells that a Knight on Cell cell can move to.
+     */
     public ArrayList<Cell> knightMoves(Cell cell) {
         ArrayList<Cell> moves = new ArrayList<>();
 
@@ -308,6 +386,10 @@ public class Board {
         return moves;
     }
 
+    /**
+     * First click selects a piece. Next time it is called it moves the piece, taking whatever piece was on that spot.
+     * @param cell the cell that is clicked.
+     */
     public void clickCell(Cell cell) {
         if (cell.getPiece() != null && clickedCell == null) {
             // case for if no cell has been pressed yet.
@@ -341,6 +423,7 @@ public class Board {
                 cell.setPiece(clickedCell.getPiece());
                 clickedCell.setPiece(null);
 
+                // pawn evolution case
                 if (clickedCell.getPiece() instanceof Pawn && clickedCell.getPiece().getType().equals("Pawn")) {
                     if ((cell.getRow() == 0 && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getPlayer() == 2)) {
                         pawnEvolution(((Pawn)cell.getPiece()));
@@ -349,10 +432,12 @@ public class Board {
                 }
             }
 
+            // switches players
             int nextPlayer = (cell.getPiece().getPlayer() == 1) ? 2 : 1;
             enablePlayersPieces(nextPlayer);
             clickedCell = null;
 
+            // checks for certain end game conditions.
             if (checkmate(nextPlayer)) {
                 System.out.println("Checkmate");
             }
@@ -369,6 +454,10 @@ public class Board {
         }
     }
 
+    /**
+     * Enables all cells that contain a piece that belongs to the player
+     * @param player
+     */
     public void enablePlayersPieces(int player) {
         for (Cell[] row : cell2DArray) {
             for (Cell cell : row) {
@@ -381,6 +470,10 @@ public class Board {
         }
     }
 
+    /**
+     * Creates a popup for evolving a pawn.
+     * @param pawn
+     */
     public void pawnEvolution(Pawn pawn) {
         JFrame popUp = new JFrame("Pawn Evolution");
         popUp.setLayout(new FlowLayout());

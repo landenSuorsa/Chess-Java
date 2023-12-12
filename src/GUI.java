@@ -1,6 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Creates the main menu screen.
+ * @author Landen Suorsa, Johnathan Hall, Christopher Hall
+ */
 public class GUI {
  // general UI for starting game and playing game
     private static JFrame mainWindow;
