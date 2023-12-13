@@ -226,17 +226,32 @@ public class Board {
      */
     public ArrayList<Cell> pawnMoves(Cell cell) {// does the cell have something that i can get the position or do i need to add something(Cell[][] board)
         //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
+ArrayList<Cell> possibleMoves = new ArrayList<>();
 
-        //how to write checks that doesnt let you go past the board perimeter***
-/*
-        ArrayList<Cell> legalMoves = new ArrayList<Cell>();
-        Cell[][] currBoard = getCell2DArray();
-        for(int i = 1; i < 8; ++){
-           if(cell == currBoard[2[i]){//does the cell have coordinates or not
-               legalMoves.add(
+        int currentRow = cell.getRow();
+        int currentCol = cell.getCol();
+        int direction = (board[currentRow][currentCol].isWhite()) ? 1 : -1;
+
+        // 1. Single move forward
+        int newRow = currentRow + direction;
+        if (isValidMove(newRow, currentCol) && board[newRow][currentCol] == null) {
+            possibleMoves.add(new Cell(newRow, currentCol));
+
+            // 2. Initial double move from starting position
+            if (isAtStartingPosition(currentRow) && board[newRow + direction][currentCol] == null) {
+                possibleMoves.add(new Cell(newRow + direction, currentCol));
+            }
         }
-*/
-        return new ArrayList<Cell>();
+
+        // 3. Capture diagonally
+        int[] captureCols = {currentCol - 1, currentCol + 1};
+        for (int col : captureCols) {
+            if (isValidMove(newRow, col) && board[newRow][col] != null && board[newRow][col].isWhite() != board[currentRow][currentCol].isWhite()) {
+                possibleMoves.add(new Cell(newRow, col));
+            }
+        }
+
+        return possibleMoves;
     }
 
     /**
