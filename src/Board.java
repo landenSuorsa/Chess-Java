@@ -417,7 +417,7 @@ public class Board {
 
         int player = cell.getPiece().getPlayer();
         int enemy = (player == 1) ? 2 : 1;
-        if (!cell.getPiece().getHasMoved() && !checkFrame.isVisible() && cell2DArray[cell.getRow()][0].getPiece() != null && !cell2DArray[cell.getRow()][0].getPiece().getHasMoved()) {
+        if (!isSimulation && !cell.getPiece().getHasMoved() && !checkFrame.isVisible() && cell2DArray[cell.getRow()][0].getPiece() != null && !cell2DArray[cell.getRow()][0].getPiece().getHasMoved()) {
             if (cell2DArray[cell.getRow()][1].getPiece() == null && cell2DArray[cell.getRow()][2].getPiece() == null && cell2DArray[cell.getRow()][3].getPiece() == null) {
                 if (!returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][1]) && !returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][2]) && !returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][3])) {
                     moves.add(cell2DArray[cell.getRow()][0]);
@@ -534,6 +534,9 @@ public class Board {
                 cell.setPiece(clickedCell.getPiece());
                 cell.getPiece().setHasMoved(true);
                 clickedCell.setPiece(null);
+                if ((cell.getRow() == 0 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 2)) {
+                    pawnEvolution(cell);
+                }
 
             } else if (clickedCell.getPiece().getType().equals("King") && cell.getPiece().getType().equals("Rook")) {
                 if (clickedCell.getCol() > cell.getCol()) {
@@ -547,9 +550,6 @@ public class Board {
                     cell2DArray[clickedCell.getRow()][clickedCell.getCol() + 1].setPiece(cell.getPiece());
                     cell.setPiece(null);
                 }
-            }
-            if ((cell.getRow() == 0 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 2)) {
-                pawnEvolution(cell);
             }
 
             // switches players
