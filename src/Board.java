@@ -1,11 +1,10 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+
+import static java.lang.Math.abs;
 
 /**
  * Creates a new chess board and contains all the movement patterns for the pieces.
@@ -15,6 +14,7 @@ public class Board {
     private Cell[][] cell2DArray = new Cell[8][8]; // the board
     private Piece whiteKing;
     private Piece blackKing;
+    private int playerInPlay;
     private JPanel whiteTakenPieces; // holds display of taken white pieces.
     private JPanel blackTakenPieces; // holds display of taken black pieces.
     private Cell clickedCell = null; // used within clickCell()
@@ -224,19 +224,72 @@ public class Board {
      * @param cell
      * @return A list of cells that a pawn on Cell cell can move to.
      */
-    public ArrayList<Cell> pawnMoves(Cell cell) {// does the cell have something that i can get the position or do i need to add something(Cell[][] board)
-        //TODO: write this function to return an arraylist of all possible moves for a pawn on Cell cell.
+    public ArrayList<Cell> pawnMoves(Cell cell) {
+        ArrayList<Cell> moves = new ArrayList<>();
+        int spaces = (!cell.getPiece().getHasMoved()) ? 2 : 1;
 
-        //how to write checks that doesnt let you go past the board perimeter***
-/*
-        ArrayList<Cell> legalMoves = new ArrayList<Cell>();
-        Cell[][] currBoard = getCell2DArray();
-        for(int i = 1; i < 8; ++){
-           if(cell == currBoard[2[i]){//does the cell have coordinates or not
-               legalMoves.add(
+        if (cell.getPiece().getPlayer() == 1) {
+            for (int i = 1; i <= spaces; i++) {
+                if (isValidMove(cell.getRow() - i, cell.getCol())) {
+                    if (cell2DArray[cell.getRow() - i][cell.getCol()].getPiece() == null) {
+                        moves.add(cell2DArray[cell.getRow() - i][cell.getCol()]);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            for (int i = -1; i < 2; i+=2) {
+                if (isValidMove(cell.getRow() - 1, cell.getCol() + i)) {
+                    if (cell2DArray[cell.getRow() - 1][cell.getCol() + i].getPiece() != null && cell2DArray[cell.getRow() - 1][cell.getCol() + i].getPiece().getPlayer() != playerInPlay) {
+                        moves.add(cell2DArray[cell.getRow() - 1][cell.getCol() + i]);
+                    }
+                }
+            }
+
+            if (cell.getRow() == 3) {
+                for (int i = -1; i < 2; i+=2) {
+                    if (isValidMove(3, cell.getCol() + i)) {
+                        if (cell2DArray[3][cell.getCol() + i].getPiece() instanceof Pawn) {
+                            if (((Pawn)cell2DArray[3][cell.getCol() + i].getPiece()).inEnPassantWindow()) {
+                                moves.add(cell2DArray[2][cell.getCol() + i]);
+                            }
+                        }
+                    }
+                }
+            }
         }
-*/
-        return new ArrayList<Cell>();
+        else if (cell.getPiece().getPlayer() == 2) {
+            for (int i = -1; i >= -spaces; i--) {
+                if (isValidMove(cell.getRow() - i, cell.getCol())) {
+                    if (cell2DArray[cell.getRow() - i][cell.getCol()].getPiece() == null) {
+                        moves.add(cell2DArray[cell.getRow() - i][cell.getCol()]);
+                    } else {
+                        break;
+                    }
+                }
+            }
+            for (int i = -1; i < 2; i+=2) {
+                if (isValidMove(cell.getRow() + 1, cell.getCol() + i)) {
+                    if (cell2DArray[cell.getRow() + 1][cell.getCol() + i].getPiece() != null && cell2DArray[cell.getRow() + 1][cell.getCol() + i].getPiece().getPlayer() != playerInPlay) {
+                        moves.add(cell2DArray[cell.getRow() + 1][cell.getCol() + i]);
+                    }
+                }
+            }
+
+            if (cell.getRow() == 4) {
+                for (int i = -1; i < 2; i+=2) {
+                    if (isValidMove(4, cell.getCol() + i)) {
+                        if (cell2DArray[4][cell.getCol() + i].getPiece() instanceof Pawn) {
+                            if (((Pawn)cell2DArray[4][cell.getCol() + i].getPiece()).inEnPassantWindow()) {
+                                moves.add(cell2DArray[5][cell.getCol() + i]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return moves;
     }
 
     /**
@@ -362,6 +415,23 @@ public class Board {
             }
         }
 
+        int player = cell.getPiece().getPlayer();
+        int enemy = (player == 1) ? 2 : 1;
+        if (!cell.getPiece().getHasMoved() && !checkFrame.isVisible() && cell2DArray[cell.getRow()][0].getPiece() != null && !cell2DArray[cell.getRow()][0].getPiece().getHasMoved()) {
+            if (cell2DArray[cell.getRow()][1].getPiece() == null && cell2DArray[cell.getRow()][2].getPiece() == null && cell2DArray[cell.getRow()][3].getPiece() == null) {
+                if (!returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][1]) && !returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][2]) && !returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][3])) {
+                    moves.add(cell2DArray[cell.getRow()][0]);
+                }
+            }
+        }
+        if (!cell.getPiece().getHasMoved() && !checkFrame.isVisible() && cell2DArray[cell.getRow()][7].getPiece() != null && !cell2DArray[cell.getRow()][7].getPiece().getHasMoved()) {
+            if (cell2DArray[cell.getRow()][5].getPiece() == null && cell2DArray[cell.getRow()][6].getPiece() == null) {
+                if (!returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][5]) && !returnTotalPossibleMoves(enemy).contains(cell2DArray[cell.getRow()][6])) {
+                    moves.add(cell2DArray[cell.getRow()][7]);
+                }
+            }
+        }
+
         return moves;
     }
 
@@ -401,18 +471,48 @@ public class Board {
     public void clickCell(Cell cell) {
         if (cell.getPiece() != null && clickedCell == null) {
             // case for if no cell has been pressed yet.
+            playerInPlay = cell.getPiece().getPlayer();
             clickedCell = cell;
             showPossibleMoves(cell);
         } else if (cell.equals(clickedCell)) {
             // case for if the same cell is clicked twice, unselecting it.
             clickedCell = null;
             enablePlayersPieces(cell.getPiece().getPlayer());
+            playerInPlay = cell.getPiece().getPlayer();
         } else if (clickedCell != null) {
             // cases for moving a piece
+            if (clickedCell.getPiece() instanceof Pawn && abs(cell.getRow() - clickedCell.getRow()) == 2) {
+                ((Pawn) clickedCell.getPiece()).setEnPassantWindow(true);
+            }
+            clickedCell.getPiece().setHasMoved(true);
             if (cell.getPiece() == null) {
-                // case for if nothing is in the spot the piece is going.
-                cell.setPiece(clickedCell.getPiece());
-                clickedCell.setPiece(null);
+                // case for en passant move
+                if (clickedCell.getPiece() instanceof Pawn) {
+                    int direction = (playerInPlay == 1) ? 1 : -1;
+                    if (cell2DArray[cell.getRow() + direction][cell.getCol()].getPiece() instanceof Pawn && ((Pawn) cell2DArray[cell.getRow() + direction][cell.getCol()].getPiece()).inEnPassantWindow()) {
+                        cell.setPiece(clickedCell.getPiece());
+                        clickedCell.setPiece(null);
+                        if (playerInPlay == 1) {
+                            ImageIcon icon = new ImageIcon("2" + cell2DArray[cell.getRow() + direction][cell.getCol()].getPiece().getType() + ".png");
+                            icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+                            blackTakenPieces.add(new JLabel(icon));
+                        } else {
+                            ImageIcon icon = new ImageIcon("1" + cell2DArray[cell.getRow() + direction][cell.getCol()].getPiece() + ".png");
+                            icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+                            whiteTakenPieces.add(new JLabel(icon));
+                        }
+
+                        cell2DArray[cell.getRow() + direction][cell.getCol()].setPiece(null);
+                    } else {
+                    // case for if nothing is in the spot the piece is going.
+                    cell.setPiece(clickedCell.getPiece());
+                    clickedCell.setPiece(null);
+                }
+                } else {
+                    // case for if nothing is in the spot the piece is going.
+                    cell.setPiece(clickedCell.getPiece());
+                    clickedCell.setPiece(null);
+                }
             } else if (cell.getPiece().getPlayer() != clickedCell.getPiece().getPlayer()) {
                 // cases for if a piece is in the spot it is going
                 if (cell.getPiece().getPlayer() == 1) {
@@ -428,21 +528,33 @@ public class Board {
                 }
 
                 // moves the piece.
+                if (clickedCell.getPiece() instanceof Pawn && abs(cell.getRow() - clickedCell.getRow()) == 2) {
+                    ((Pawn) clickedCell.getPiece()).setEnPassantWindow(true);
+                }
                 cell.setPiece(clickedCell.getPiece());
+                cell.getPiece().setHasMoved(true);
                 clickedCell.setPiece(null);
 
-                // pawn evolution case
-                if (clickedCell.getPiece() instanceof Pawn && clickedCell.getPiece().getType().equals("Pawn")) {
-                    if ((cell.getRow() == 0 && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getPlayer() == 2)) {
-                        pawnEvolution(((Pawn)cell.getPiece()));
-                        cell.updateIcon();
-                    }
+            } else if (clickedCell.getPiece().getType().equals("King") && cell.getPiece().getType().equals("Rook")) {
+                if (clickedCell.getCol() > cell.getCol()) {
+                    cell2DArray[clickedCell.getRow()][clickedCell.getCol() - 2].setPiece(clickedCell.getPiece());
+                    clickedCell.setPiece(null);
+                    cell2DArray[clickedCell.getRow()][clickedCell.getCol() - 1].setPiece(cell.getPiece());
+                    cell.setPiece(null);
+                } else {
+                    cell2DArray[clickedCell.getRow()][clickedCell.getCol() + 2].setPiece(clickedCell.getPiece());
+                    clickedCell.setPiece(null);
+                    cell2DArray[clickedCell.getRow()][clickedCell.getCol() + 1].setPiece(cell.getPiece());
+                    cell.setPiece(null);
                 }
+            }
+            if ((cell.getRow() == 0 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 1) || (cell.getRow() == 7 && cell.getPiece().getType().equals("Pawn") && cell.getPiece().getPlayer() == 2)) {
+                pawnEvolution(cell);
             }
 
             // switches players
             checkFrame.setVisible(false);
-            int nextPlayer = (cell.getPiece().getPlayer() == 1) ? 2 : 1;
+            int nextPlayer = (playerInPlay == 1) ? 2 : 1;
             enablePlayersPieces(nextPlayer);
             clickedCell = null;
 
@@ -456,7 +568,6 @@ public class Board {
             else if (stalemate(nextPlayer)) {
                 endOfGamePopUp("stalemate", nextPlayer);
             }
-
         } else {
             // shouldn't be reached.
             throw new RuntimeException();
@@ -475,33 +586,39 @@ public class Board {
                 } else {
                     cell.setEnabled(false);
                 }
+                if (cell.getPiece() instanceof Pawn && cell.getPiece().getPlayer() == player) {
+                    ((Pawn) cell.getPiece()).setEnPassantWindow(false);
+                }
             }
         }
     }
 
     /**
      * Creates a popup for evolving a pawn.
-     * @param pawn
+     * @param cell
      */
-    public void pawnEvolution(Pawn pawn) {
+    public void pawnEvolution(Cell cell) {
         JFrame popUp = new JFrame("Pawn Evolution");
         popUp.setLayout(new FlowLayout());
         JButton option1 = new JButton("Pawn");
-        option1.addActionListener(e -> {pawn.evolve(option1.getText()); popUp.dispose(); });
+        option1.addActionListener(e -> {((Pawn)cell.getPiece()).evolve(option1.getText()); popUp.dispose(); cell.updateIcon(); });
         JButton option2 = new JButton("Rook");
-        option1.addActionListener(e -> {pawn.evolve(option2.getText()); popUp.dispose(); });
+        option2.addActionListener(e -> {((Pawn)cell.getPiece()).evolve(option2.getText()); popUp.dispose(); cell.updateIcon(); });
         JButton option3 = new JButton("Bishop");
-        option1.addActionListener(e -> {pawn.evolve(option3.getText()); popUp.dispose(); });
+        option3.addActionListener(e -> {((Pawn)cell.getPiece()).evolve(option3.getText()); popUp.dispose(); cell.updateIcon(); });
         JButton option4 = new JButton("Knight");
-        option1.addActionListener(e -> {pawn.evolve(option4.getText()); popUp.dispose(); });
+        option4.addActionListener(e -> {((Pawn)cell.getPiece()).evolve(option4.getText()); popUp.dispose(); cell.updateIcon(); });
         JButton option5 = new JButton("Queen");
-        option1.addActionListener(e -> {pawn.evolve(option5.getText()); popUp.dispose(); });
+        option5.addActionListener(e -> {((Pawn)cell.getPiece()).evolve(option5.getText()); popUp.dispose(); cell.updateIcon(); });
         popUp.add(option1);
         popUp.add(option2);
         popUp.add(option3);
         popUp.add(option4);
         popUp.add(option5);
 
+        popUp.pack();
+        popUp.setSize(500, 100);
+        popUp.setLocationRelativeTo(null);
         popUp.setVisible(true);
         popUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
     }

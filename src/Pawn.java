@@ -3,6 +3,7 @@
  * @author Landen Suorsa, Johnathan Hall, Christopher Hall
  */
 public class Pawn extends Piece {
+    private boolean enPassantWindow = false;
     /**
      * Creates a new pawn.
      * @param player 1 for white, 2 for black
@@ -17,6 +18,14 @@ public class Pawn extends Piece {
      */
     public Pawn(Pawn pawn) {
         super("Pawn", pawn.getPlayer());
+    }
+
+    public boolean inEnPassantWindow() {
+        return enPassantWindow;
+    }
+
+    public void setEnPassantWindow(boolean enPassantWindow) {
+        this.enPassantWindow = enPassantWindow;
     }
 
     /**

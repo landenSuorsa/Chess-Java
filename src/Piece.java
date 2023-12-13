@@ -4,6 +4,7 @@
  */
 public class Piece {
     protected String type;
+    private boolean hasMoved = false;
     private int player; // 1 for white, 2 for black
 
 
@@ -24,6 +25,22 @@ public class Piece {
     public Piece(Piece piece) {
         this.type = piece.getType();
         this.player = piece.getPlayer();
+        this.hasMoved = piece.hasMoved;
+    }
+
+    /**
+     * set to show that a piece has moved. Used for castling.
+     * @param hasMoved
+     */
+    public void setHasMoved(boolean hasMoved) {
+        this.hasMoved = hasMoved;
+    }
+
+    /**
+     * @return if the piece has moved yet.
+     */
+    public boolean getHasMoved() {
+        return hasMoved;
     }
 
     /**

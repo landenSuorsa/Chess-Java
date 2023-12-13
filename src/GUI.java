@@ -84,12 +84,7 @@ public class GUI {
          });
 
          // enables the first player's pieces. The rest is done in the board class.
-         int player = 1;
-         for (Cell[] row : game.getCell2DArray()) {
-             for (Cell cell : row) {
-                 cell.setEnabled(cell.getPiece() != null && cell.getPiece().getPlayer() == player);
-             }
-         }
+         game.enablePlayersPieces(1);
      }
  }
 
