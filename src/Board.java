@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,6 +21,7 @@ public class Board {
     private Color brown = new Color(104,80,40);
     private Color lightBrown = new Color(130,100,60);
     private boolean isSimulation = false; // is set to true in deep copies of the board.
+    private JFrame checkFrame = new JFrame("Check"); // used in checkPopUp()
 
     /**
      * Creates a new chess Board with the default layout of the pieces.
@@ -42,9 +45,9 @@ public class Board {
 
         // sets the pieces
         for (int i = 0; i < 8; i++) {
-            cell2DArray[0][i].setPiece(new Piece(pieceNames[i],2));
+            cell2DArray[0][i].setPiece(new Piece(pieceNames[i], 2));
             cell2DArray[1][i].setPiece(new Pawn(2));
-            cell2DArray[7][i].setPiece(new Piece(pieceNames[i],1));
+            cell2DArray[7][i].setPiece(new Piece(pieceNames[i], 1));
             cell2DArray[6][i].setPiece(new Pawn(1));
         }
 
@@ -54,11 +57,11 @@ public class Board {
 
         // creates the display for taken enemy pieces.
         whiteTakenPieces = new JPanel();
-        whiteTakenPieces.setLayout(new GridLayout(2,8));
-        whiteTakenPieces.setPreferredSize(new Dimension(500,100));
+        whiteTakenPieces.setLayout(new GridLayout(2, 8));
+        whiteTakenPieces.setPreferredSize(new Dimension(500, 100));
         blackTakenPieces = new JPanel();
-        blackTakenPieces.setLayout(new GridLayout(2,8));
-        blackTakenPieces.setPreferredSize(new Dimension(500,100));
+        blackTakenPieces.setLayout(new GridLayout(2, 8));
+        blackTakenPieces.setPreferredSize(new Dimension(500, 100));
     }
 
     /**
@@ -97,6 +100,11 @@ public class Board {
      * @return gives the display of taken black pieces.
      */
     public JPanel getBlackTakenPieces() {return blackTakenPieces; }
+
+    /**
+     * @return frame that tells user who is in check.
+     */
+    public JFrame getCheckFrame() {return checkFrame; }
 
     /**
      * @param player
@@ -433,19 +441,20 @@ public class Board {
             }
 
             // switches players
+            checkFrame.setVisible(false);
             int nextPlayer = (cell.getPiece().getPlayer() == 1) ? 2 : 1;
             enablePlayersPieces(nextPlayer);
             clickedCell = null;
 
             // checks for certain end game conditions.
             if (checkmate(nextPlayer)) {
-                System.out.println("Checkmate");
+                endOfGamePopUp("checkmate", nextPlayer);
             }
             else if (check(nextPlayer)) {
-                System.out.println("Check");
+                checkPopUp(nextPlayer);
             }
             else if (stalemate(nextPlayer)) {
-                System.out.println("Stalemate");
+                endOfGamePopUp("stalemate", nextPlayer);
             }
 
         } else {
@@ -478,15 +487,15 @@ public class Board {
         JFrame popUp = new JFrame("Pawn Evolution");
         popUp.setLayout(new FlowLayout());
         JButton option1 = new JButton("Pawn");
-        option1.addActionListener(e -> {pawn.evolve(option1.getText()); popUp.setVisible(false); });
+        option1.addActionListener(e -> {pawn.evolve(option1.getText()); popUp.dispose(); });
         JButton option2 = new JButton("Rook");
-        option1.addActionListener(e -> {pawn.evolve(option2.getText()); popUp.setVisible(false); });
+        option1.addActionListener(e -> {pawn.evolve(option2.getText()); popUp.dispose(); });
         JButton option3 = new JButton("Bishop");
-        option1.addActionListener(e -> {pawn.evolve(option3.getText()); popUp.setVisible(false); });
+        option1.addActionListener(e -> {pawn.evolve(option3.getText()); popUp.dispose(); });
         JButton option4 = new JButton("Knight");
-        option1.addActionListener(e -> {pawn.evolve(option4.getText()); popUp.setVisible(false); });
+        option1.addActionListener(e -> {pawn.evolve(option4.getText()); popUp.dispose(); });
         JButton option5 = new JButton("Queen");
-        option1.addActionListener(e -> {pawn.evolve(option5.getText()); popUp.setVisible(false); });
+        option1.addActionListener(e -> {pawn.evolve(option5.getText()); popUp.dispose(); });
         popUp.add(option1);
         popUp.add(option2);
         popUp.add(option3);
@@ -495,5 +504,69 @@ public class Board {
 
         popUp.setVisible(true);
         popUp.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+    }
+
+    /**
+     * Throws up a popup when an end of game condition is reached.
+     * @param condition
+     * @param player
+     */
+    public void endOfGamePopUp(String condition, int player) {
+        JFrame popUp = new JFrame("Game End");
+        JLabel text = new JLabel();
+        if (condition.equals("checkmate")) {
+            if (player == 1) {
+                text = new JLabel("Black Wins");
+                text.setForeground(Color.BLACK);
+                popUp.getContentPane().setBackground(Color.white);
+            } else {
+                text = new JLabel("White Wins");
+                text.setForeground(Color.WHITE);
+                popUp.getContentPane().setBackground(Color.black);
+            }
+        } else if (condition.equals("stalemate")) {
+            text = new JLabel("Stalemate. Both lose. ");
+        }
+        text.setHorizontalAlignment(SwingConstants.CENTER);
+        text.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+        popUp.add(text);
+
+        enablePlayersPieces(0);
+        popUp.setVisible(true);
+        popUp.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        popUp.pack();
+        popUp.setSize(400,200);
+        popUp.setLocationRelativeTo(null);
+    }
+
+    /**
+     * Throws up a popUp when a player is in check.
+     * @param player
+     */
+    public void checkPopUp(int player) {
+        checkFrame = new JFrame("Check");
+        JLabel text;
+        checkFrame.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+        Point center = GraphicsEnvironment.getLocalGraphicsEnvironment().getCenterPoint();
+
+        if (player == 1) {
+            text = new JLabel("IN CHECK");
+            text.setForeground(Color.BLACK);
+            checkFrame.getContentPane().setBackground(Color.white);
+            checkFrame.setLocation(new Point((int)center.getX() - 350, (int)center.getY() + 250));
+        } else {
+            text = new JLabel("IN CHECK");
+            text.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 50));
+            text.setForeground(Color.WHITE);
+            checkFrame.getContentPane().setBackground(Color.black);
+            checkFrame.setLocation(new Point((int)center.getX() - 350, (int)center.getY() - 275));
+        }
+        text.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 20));
+
+        checkFrame.add(text);
+        checkFrame.setUndecorated(true);
+        checkFrame.setVisible(true);
+        checkFrame.pack();
+        checkFrame.setSize(100,50);
     }
 }
